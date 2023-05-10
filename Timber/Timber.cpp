@@ -143,17 +143,17 @@ int main() {
 	bool acceptInput = false;
 
 	SoundBuffer chopBuffer;
-	chopBuffer.loadFromFile("sound/chop.wav");
+	chopBuffer.loadFromFile("sounds/Chapter01_sound_chop.wav");
 	Sound chop;
 	chop.setBuffer(chopBuffer);
 
 	SoundBuffer deathBuffer;
-	deathBuffer.loadFromFile("sound/death.wav");
+	deathBuffer.loadFromFile("sounds/Chapter01_sound_death.wav");
 	Sound death;
 	death.setBuffer(deathBuffer);
 
 	SoundBuffer ootBuffer;
-	ootBuffer.loadFromFile("sound/out_of_time.wav");
+	ootBuffer.loadFromFile("sounds/Chapter01_sound_out_of_time.wav");
 	Sound outOfTime;
 	outOfTime.setBuffer(ootBuffer);
 
@@ -241,6 +241,7 @@ int main() {
 				logActive = true;
 
 				acceptInput = false;
+				chop.play();
 			}
 		}
 
