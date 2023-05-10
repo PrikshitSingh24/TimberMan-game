@@ -144,6 +144,16 @@ int main() {
 		/*
 		if the player presses the escape key the game will stop.....
 		*/
+		Event event;
+		while (window.pollEvent(event)) {
+			if (event.type == Event::KeyReleased && !paused) {
+				acceptInput = true;
+				spriteAxe.setPosition(2000, spriteAxe.getPosition().y);
+			}
+		}
+		if (Keyboard::isKeyPressed(Keyboard::Escape)) {
+			window.close();
+		}
 		if (Keyboard::isKeyPressed(Keyboard::Escape))
 		{
 			window.close();
@@ -159,6 +169,41 @@ int main() {
 			spritePlayer.setPosition(580, 720);
 			acceptInput = true;
 
+		}
+		if (acceptInput) {
+
+
+			if (Keyboard::isKeyPressed(Keyboard::Right)) {
+				playerSide = side::RIGHT;
+				score++;
+				timeRemaining += (2 / score) + .15;
+				spriteAxe.setPosition(AXE_POSITION_RIGHT, spriteAxe.getPosition().y);
+				spritePlayer.setPosition(1200, 720);
+
+				updateBranches(score);
+
+				spriteLog.setPosition(810, 720);
+				logSpeedX = -5000;
+				logActive = true;
+
+				acceptInput = false;
+			}
+
+			if (Keyboard::isKeyPressed(Keyboard::Left)) {
+				playerSide = side::LEFT;
+				score++;
+				timeRemaining+= timeRemaining += (2 / score) + .15;
+				spriteAxe.setPosition(AXE_POSITION_LEFT, spriteAxe.getPosition().y);
+				spritePlayer.setPosition(580, 720);
+
+				updateBranches(score);
+
+				spriteLog.setPosition(810, 720);
+				logSpeedX = 5000;
+				logActive = true;
+
+				acceptInput = false;
+			}
 		}
 
 		if (!paused) {
@@ -259,14 +304,33 @@ int main() {
 					branches[i].setRotation(180);
 				}
 				else if (branchPosition[i] == side::RIGHT) {
-					branches[i].setPosition(1330, height);
+					branches[i].setPosition(1100, height);
 					branches[i].setRotation(0);
 				}
 				else {
 					branches[i].setPosition(3000, height);
 				}
 			}
+			if (logActive) {
+				spriteLog.setPosition(
+					spriteLog.getPosition().x + (logSpeedY * dt.asSeconds()),
+					spriteLog.getPosition().y + (logSpeedY * dt.asSeconds())
+				);
+				if (spriteLog.getPosition().x < -100 ||
+					spriteLog.getPosition().x>2000) {
+					logActive = false;
+					spriteLog.setPosition(810, 720);
+				}
+			}
+			if (branchPosition[5] == playerSide) {
+				paused = true;
+				acceptInput = false;
+				spriteRIP.setPosition(525, 760);
+
+				spritePlayer.setPosition(2000, 660);
+			}
 		}
+		
 		window.clear();
 		window.draw(spriteBackground);
 		window.draw(spriteCloud);
