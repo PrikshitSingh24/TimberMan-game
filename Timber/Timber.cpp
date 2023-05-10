@@ -1,11 +1,14 @@
 #include<sstream>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include<SFML/Audio.hpp>
+
 using namespace sf;
 
 void updateBranches(int seed);
 const int NUM_BRANCHES = 6;
 Sprite branches[NUM_BRANCHES];
+Sprite treesBackground[4];
 enum class side{LEFT,RIGHT,NONE};
 side branchPosition[NUM_BRANCHES];
 
@@ -139,6 +142,40 @@ int main() {
 	
 	bool acceptInput = false;
 
+	SoundBuffer chopBuffer;
+	chopBuffer.loadFromFile("sound/chop.wav");
+	Sound chop;
+	chop.setBuffer(chopBuffer);
+
+	SoundBuffer deathBuffer;
+	deathBuffer.loadFromFile("sound/death.wav");
+	Sound death;
+	death.setBuffer(deathBuffer);
+
+	SoundBuffer ootBuffer;
+	ootBuffer.loadFromFile("sound/out_of_time.wav");
+	Sound outOfTime;
+	outOfTime.setBuffer(ootBuffer);
+
+	Texture textureBackgroundTree;
+	textureBackgroundTree.loadFromFile("graphics/tree.png");
+	for (int i = 0; i < 4; i++) {
+		treesBackground[i].setTexture(textureBackgroundTree);
+	}
+
+	treesBackground[0].setPosition(40, 0);
+	treesBackground[0].scale(Vector2f(1, 1.5));
+
+	treesBackground[1].setPosition(420, -200);
+	treesBackground[1].scale(Vector2f(0.5, 1));
+
+	treesBackground[2].setPosition(1520, -100);
+	treesBackground[2].scale(Vector2f(0.8, 1));
+
+	treesBackground[3].setPosition(1159, -240);
+	treesBackground[3].scale(Vector2f(0.4, 1));
+
+
 	while (window.isOpen())
 	{
 		/*
@@ -187,12 +224,13 @@ int main() {
 				logActive = true;
 
 				acceptInput = false;
+				chop.play();
 			}
 
 			if (Keyboard::isKeyPressed(Keyboard::Left)) {
 				playerSide = side::LEFT;
 				score++;
-				timeRemaining+= timeRemaining += (2 / score) + .15;
+				timeRemaining+= (2 / score) + .15;
 				spriteAxe.setPosition(AXE_POSITION_LEFT, spriteAxe.getPosition().y);
 				spritePlayer.setPosition(580, 720);
 
@@ -222,6 +260,7 @@ int main() {
 					textRect.height / 2.0f
 				);
 				messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+				outOfTime.play();
 			}
 
 			if (!beeActive) {
@@ -328,7 +367,21 @@ int main() {
 				spriteRIP.setPosition(525, 760);
 
 				spritePlayer.setPosition(2000, 660);
+
+				messageText.setString("SQUISHED");
+				FloatRect textRect = messageText.getLocalBounds();
+
+				messageText.setOrigin(textRect.left +
+					textRect.width / 2.0f,
+					textRect.top +
+					textRect.height / 2.0f
+				);
+				messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+
+				death.play();
+
 			}
+
 		}
 		
 		window.clear();
@@ -336,9 +389,13 @@ int main() {
 		window.draw(spriteCloud);
 		window.draw(spriteCloud2);
 		window.draw(spriteCloud3);
+		window.draw(treesBackground[3]);
+		window.draw(treesBackground[1]);
+		window.draw(treesBackground[2]);
 		for (int i = 0; i < NUM_BRANCHES; i++) {
 			window.draw(branches[i]);
 		}
+		window.draw(treesBackground[0]);
 		window.draw(spriteTree);
 		window.draw(spritePlayer);
 		window.draw(spriteAxe);
